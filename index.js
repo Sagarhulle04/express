@@ -1,6 +1,8 @@
 import express from 'express'
 const app = express()
 
+// console.clear()
+
 const port = 3000;
 
 app.use(express.json())
@@ -8,21 +10,18 @@ app.use(express.json())
 let teaData = [];
 let nextId = 1;
 
-// add a task
-app.post('/teas', (req, res) => {
+app.get('/tea', (req, res) => {
+    res.status(200).send(teaData)
+})
+
+app.post('/tea', (req, res) => {
     const { name, price } = req.body;
     const newTea = { id: nextId++, name, price };
     teaData.push(newTea);
     res.status(201).send(newTea)
 })
 
-// see a task
-app.get("/teas", (req, res) => {
-    res.status(200).send(teaData)
-})
-
-// get a tea
-app.get('/teas/:id', (req, res) => {
+app.get('/tea/:id', (req, res) => {
     const tea = teaData.find(t => t.id === parseInt(req.params.id))
 
     if (!tea) {
@@ -31,8 +30,7 @@ app.get('/teas/:id', (req, res) => {
     res.status(200).send(tea)
 })
 
-// update tea
-app.put('/teas/:id', (req, res) => {
+app.put('/tea/:id', (req, res) => {
     const tea = teaData.find(t => t.id === parseInt(req.params.id))
     const { name, price } = req.body;
 
@@ -44,17 +42,11 @@ app.put('/teas/:id', (req, res) => {
     res.status(200).send(tea)
 })
 
-// delete tea
-app.delete('/teas/:id', (req, res) => {
-    const index = teaData.findIndex(t => t.id === parseInt(req.params.id))
-
-    if (index === -1) {
-        return res.status(404).send('tea not found')
-    }
-    teaData.splice(index, 1);
+app.delete('/tea/:id', (req, res) => {
+    teaData.splice(teaData.findIndex(t => t.id === parseInt(req.params.id)), 1)
     res.status(204).send('Tea Deleted')
 })
 
 app.listen(port, () => {
-    console.log(`server running `)
+    console.log('server running')
 })
